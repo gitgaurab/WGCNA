@@ -89,3 +89,38 @@ sizeGrWindow(12, 9)
 mergedColors = labels2colors(net$colors)
 # Plot the dendrogram and the module colors underneath
 plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],"Module colors",dendroLabels = FALSE, hang = 0.03,addGuide = TRUE, guideHang = 0.05)
+
+#####We now save the module assignment and module eigengene information necessary for subsequent analysis.
+moduleLabels = net$colors
+moduleColors = labels2colors(net$colors)
+MEs = net$MEs;
+geneTree = net$dendrograms[[1]]
+save(MEs, moduleLabels, moduleColors, geneTree,file = "../../Final analysis_RNA_seq_SILVA_STAR/Network_analysis/scab-networkConstruction-auto.RData")
+
+##Load the data (Skip from this line to '####Extract genes in each module' below: I did not find so important for WGCNA)
+
+lnames<-load("../../Final analysis_RNA_seq_SILVA_STAR/Network_analysis/scab-networkConstruction-auto.RData")
+lnames
+nGenes = ncol(data0)
+nSamples = nrow(data0)
+# Calculate topological overlap anew: this could be done more efficiently by saving the TOM
+# calculated during module detection, but let us do it again here.
+dissTOM<-1-TOMsimilarityFromExpr(data0, power = 16)
+# Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
+plotTOM = dissTOM^7;
+# Set diagonal to NA for a nicer plot
+diag(plotTOM) = NA;
+# Call the plot function
+sizeGrWindow(9,9)
+TOMplot(plotTOM, geneTree, moduleColors, main = "Network heatmap plot, all genes")
+diag(dissTOM) = NA
+sizeGrWindow(9,9)
+TOMplot(dissTOM, geneTree, moduleColors, main = "Network heatmap plot, all genes")
+
+##########################################
+
+
+####Extract genes in each module
+table(moduleColors) ###Check different module colors
+write.csv((brown<-names(data0)[moduleColors=="brown"]),"../../Final analysis_RNA_seq_SILVA_STAR/Network_analysis/Brown.csv") ##Example for Brown module
+
