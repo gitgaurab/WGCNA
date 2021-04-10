@@ -5,7 +5,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 biocLite("impute")
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
-BiocManager::install(version = "3.10")
+BiocManager::install(version = "3.10") ##Check the latest version if available
 BiocManager::install("GO.db")
 BiocManager::install("preprocessCore")
 BiocManager::install("impute")
@@ -15,28 +15,41 @@ library(WGCNA)
 # The following setting is important, do not omit.
 options(stringsAsFactors = FALSE)
 data<-read.csv("../../Final analysis_RNA_seq_SILVA_STAR/Network_analysis/unique_genes.csv")
-#Read in the data set
-data = read.csv("LiverFemale3600.csv");
+
+
+#Read in the data set (From Tutorial)
+#data = read.csv("LiverFemale3600.csv");
 # Take a quick look at what is in the data set:
+
+##Check the dataset
 dim(data)
 names(data)
+
 #########Transposing data except first column which had gene ID
 data0<-as.data.frame(t(data[,-c(1)]))
+
 #####Assigning names (gene names)
 names(data0)<-data$genes
+
 ####Provide the rownames (Remember we need to transpose the data)
 rownames(data0)<-names(data)[-c(1)]
-#################### Below is from manual############
+
+
+#################### Below is the code from manual don't use here ############
 datExpr0 = as.data.frame(t(femData[, -c(1:8)]))####
 names(datExpr0) = femData$substanceBXH############
 rownames(datExpr0) = names(femData)[-c(1:8)]#########
 ###################################################
+
 ### check for genes and samples with too many missing values:
 gsg = goodSamplesGenes(data0, verbose = 3)
 gsg$allOK
+
 #####Last statement gave 'TRUE' value so there are not any genes with missing data
+
 ##Cluster to see if there are any outliers
 sampletree<-hclust(dist(data0),method = 'average')
+
 # Plot the sample tree: Open a graphic output window of size 12 by 9 inches
 # The user should change the dimensions if the window is too large or too small.
 sizeGrWindow(12,9)
@@ -52,6 +65,7 @@ powers = c(c(1:10), seq(from = 12, to=20, by=2))
 
 # Call the network topology analysis function
 sft = pickSoftThreshold(data0, powerVector = powers, verbose = 5)
+
 # Plot the results:
 sizeGrWindow(9, 5)
 par(mfrow = c(1,2))
